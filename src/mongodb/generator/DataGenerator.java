@@ -37,6 +37,9 @@ public class DataGenerator {
         String[] transmissions = {"Automático", "Manual"};
         String[] fuels = {"Gasolina", "Álcool", "Diesel"};
         String[] colors = {"Branco", "Prata", "Preto"};
+        String[] optionalNames = {"Vidro Elétrico", "Alarme", "DVD"};
+        String[] texts = {"Bateria nova", "Inteiro", "Único dono"};
+        String[] pathNames = {"\\anuncio\\fotos\\fotoABC.jpg", "\\anuncio\\fotos\\fotoDeFrente.jpg", "\\anuncio\\fotos\\fotoInterna.jpg"};
         
         String registrationPlate;
         int year;
@@ -47,6 +50,14 @@ public class DataGenerator {
         String color;
         double kilometer;
         double value;
+        String[] optionalName;
+        String[] text;
+        String[] pathName;
+        int numberOptionalNames;
+        int numberTexts;
+        int numberPathNames;
+        
+        StringBuilder register;
         
         for (int i = 0; i < registers; i++) {
             registrationPlate = registrationPlates[(int) (Math.random() * registrationPlates.length)];
@@ -58,19 +69,109 @@ public class DataGenerator {
             color = colors[(int) (Math.random() * colors.length)];
             kilometer = 1000 + (Math.random() * 100000);
             value = 5000 + (Math.random() * 100000);
+            numberOptionalNames = (int) (Math.random() * 4);
+            optionalName = new String[numberOptionalNames];
+            numberTexts = (int) (Math.random() * 4);
+            text = new String[numberTexts];
+            numberPathNames = (int) (Math.random() * 4);
+            pathName = new String[numberPathNames];
+            
+            for (int j = 0; j < numberOptionalNames; j++) {
+                optionalName[j] = optionalNames[(int) (Math.random() * optionalNames.length)];
+            }
+            
+            for (int j = 0; j < numberTexts; j++) {
+                text[j] = texts[(int) (Math.random() * texts.length)];
+            }
+            
+            for (int j = 0; j < numberPathNames; j++) {
+                pathName[j] = pathNames[(int) (Math.random() * pathNames.length)];
+            }
+            register = new StringBuilder("{ \"placa_carro\": \"");
+            register.append(registrationPlate);
+            register.append("\", \"ano\": ");
+            register.append(year);
+            register.append(", \"modelo\": ");
+            register.append(model);
+            register.append(", \"qtd_portas\": ");
+            register.append(door);
+            register.append(", \"cambio\": \"");
+            register.append(transmission);
+            register.append("\", \"combustivel\": \"");
+            register.append(fuel);
+            register.append("\", \"cor\": \"");
+            register.append(color);
+            register.append("\", \"km\": ");
+            register.append(kilometer);
+            register.append(", \"valor\": ");
+            register.append(value);
+                    
 
-            fileMongoDB.write("{ " + 
-                    "\"placa_carro\": \"" + registrationPlate + "\", " +
-                    "\"ano\": " + year + ", " +          
-                    "\"modelo\": " + model + ", " +          
-                    "\"qtd_portas\": " + door + ", " +          
-                    "\"cambio\": \"" + transmission + "\", " +          
-                    "\"combustivel\": \"" + fuel + "\", " +          
-                    "\"cor\": \"" + color + "\", " +          
-                    "\"km\": " + kilometer + ", " +          
-                    "\"valor\": " + value + " }");
+            for (int j = 0; j < numberOptionalNames; j++) {
+                if(j == 0){
+                    register.append(", opcional: ");
+                    if(numberOptionalNames > 1){
+                        register.append("[ ");
+                    }
+                }
+                register.append("\"");
+                register.append(optionalName[j]);
+                register.append("\"");
+                        
+                if(j == (numberOptionalNames - 1)){
+                    if(numberOptionalNames > 1){
+                        register.append(" ]");
+                    }
+                } else {
+                    register.append(", ");
+                }
+            }
 
+            for (int j = 0; j < numberTexts; j++) {
+                if(j == 0){
+                    register.append(", detalhe: ");
+                    if(numberTexts > 1){
+                        register.append("[ ");
+                    }
+                }
+                register.append("\"");
+                register.append(text[j]);
+                register.append("\"");
+                        
+                if(j == (numberTexts - 1)){
+                    if(numberTexts > 1){
+                        register.append(" ]");
+                    }
+                } else {
+                    register.append(", ");
+                }
+            }
+            
+            for (int j = 0; j < numberPathNames; j++) {
+                if(j == 0){
+                    register.append(", foto: ");
+                    if(numberPathNames > 1){
+                        register.append("[ ");
+                    }
+                }
+                register.append("\"");
+                register.append(pathName[j]);
+                register.append("\"");
+                        
+                if(j == (numberPathNames - 1)){
+                    if(numberPathNames > 1){
+                        register.append(" ]");
+                    }
+                } else {
+                    register.append(", ");
+                }
+            }
+
+            register.append(" }");
+            
+            fileMongoDB.write(register.toString());
         }
+       
         fileMongoDB.saveDataFile();
 
     }
