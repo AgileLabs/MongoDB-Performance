@@ -91,12 +91,19 @@ public class MongoDBPerformance {
 
         DBCursor cursor = collection.find(new BasicDBObject(), keys).sort(sort);
         while (cursor.hasNext()) {
-            continue;
+            cursor.next();
         }
         // Time end
         elapsed = System.currentTimeMillis() - start;
         System.out.println("[select] Time elapsed: " + elapsed + " ms");
 
+        // Delete
+        // Time start    
+        start = System.currentTimeMillis();
+        collection.remove(new BasicDBObject());
+        // Time end
+        elapsed = System.currentTimeMillis() - start;
+        System.out.println("[delete] Time elapsed: " + elapsed + " ms");
     }
 
 }
