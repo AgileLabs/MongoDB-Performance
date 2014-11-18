@@ -31,6 +31,12 @@ public class MongoDBPerformance {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws UnknownHostException, FileNotFoundException, IOException {
+        if (args.length == 0){
+            System.out.println("Parâmetro não informado!");                            
+            System.exit(-1);
+        }    
+        System.out.println("Parâmetro: " + args[0]);       
+
         MongoClient mongoClient = new MongoClient();
         DB db = mongoClient.getDB("myDatabase");
         
@@ -41,6 +47,9 @@ public class MongoDBPerformance {
         
         FileInputStream fileInputStream = new FileInputStream(".\\resources\\MongoDB100000.txt");
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream));
+        // Insert
+        // Time start    
+        long start = System.currentTimeMillis();
         
         String line;
         while ((line = bufferedReader.readLine()) != null) {
@@ -48,8 +57,9 @@ public class MongoDBPerformance {
             builder.insert(bson);
         }
         bufferedReader.close();
-        BulkWriteResult result = builder.execute();
-        System.out.println("Resultado: " + result);
+        //Time end
+        long elapsed = System.currentTimeMillis() - start;
+        System.out.println("[insert] Time elapsed: " + elapsed + " ms");
     }
     
 }
